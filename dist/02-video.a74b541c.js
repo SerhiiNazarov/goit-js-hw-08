@@ -508,25 +508,20 @@ var _player = require("@vimeo/player");
 var _playerDefault = parcelHelpers.interopDefault(_player);
 var _lodashThrottle = require("lodash.throttle");
 var _lodashThrottleDefault = parcelHelpers.interopDefault(_lodashThrottle);
+const iframeRef = document.querySelector("iframe");
 const STORAGE_KEY = "videoplayer-current-time";
-const player = new (0, _playerDefault.default)("vimeo-player", {
-    id: "vimeo-player",
-    width: 640
-});
-function onCurrentTime(currentTime) {
-    const curTime = JSON.stringify(currentTime.seconds);
-    localStorage.setItem(STORAGE_KEY, curTime);
+const player = new (0, _playerDefault.default)(iframeRef);
+initPage();
+function onCurrentTime({ seconds  }) {
+    localStorage.setItem(STORAGE_KEY, seconds);
 }
-player.on("timeupdate", (0, _lodashThrottleDefault.default)(onCurrentTime(data), 1000));
-player.setCurrentTime(localStorage.getItem(STORAGE_KEY)).then(function(seconds) {}).catch(function(error) {
-    switch(error.name){
-        case "RangeError":
-            console.log("the time was less than 0 or greater than the video\u2019s duration");
-            break;
-        default:
-            break;
-    }
-});
+player.on("timeupdate", (0, _lodashThrottleDefault.default)(onCurrentTime, 1000));
+function initPage() {
+    let saveData = localStorage.getItem(STORAGE_KEY);
+    if (!saveData) return;
+    player.setCurrentTime(localStorage.getItem(STORAGE_KEY));
+}
+initPage();
 
 },{"@vimeo/player":"kmmUG","lodash.throttle":"bGJVT","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kmmUG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
